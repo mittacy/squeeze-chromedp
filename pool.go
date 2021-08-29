@@ -19,13 +19,6 @@ var (
 )
 
 type Pool struct {
-	// TestOnBorrow is an optional application supplied function for checking
-	// the health of an idle connection before the connection is used again by
-	// the application. Argument t is the time that the connection was returned
-	// to the pool. If the function returns an error, then the connection is
-	// closed.
-	TestOnBorrow func(c Conn, t time.Time) error
-
 	// Maximum number of idle connections in the pool.
 	MaxIdle int
 
@@ -152,10 +145,11 @@ func (p *Pool) GetContext(ctx context.Context) (Conn, error) {
 		pc := p.idle.front
 		p.idle.popFront()
 		p.mu.Unlock()
-		if (p.TestOnBorrow == nil || p.TestOnBorrow(pc.c, pc.t) == nil) &&
+		if p.TestOnBorrow(pc.c) == nil &&
 			(p.MaxConnLifetime == 0 || nowFunc().Sub(pc.created) < p.MaxConnLifetime) {
 			return &activeConn{p: p, pc: pc}, nil
 		}
+
 		pc.c.Close()
 		p.mu.Lock()
 		p.active--
@@ -243,6 +237,16 @@ func (p *Pool) Close() error {
 	}
 
 	p.rootCancel()
+	return nil
+}
+
+// TestOnBorrow is an function for checking the health of an idle connection
+// before the connection is used again by the application. If the function
+// returns an error, then the connection is closed.
+func (p *Pool) TestOnBorrow(c Conn) error {
+	if err := chromedp.Run(c.Get(), chromedp.Tasks{chromedp.ResetViewport()}); err != nil {
+		return err
+	}
 	return nil
 }
 
