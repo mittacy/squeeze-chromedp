@@ -39,6 +39,9 @@ type Pool struct {
 	// the pool does not close connections based on age.
 	MaxConnLifetime time.Duration
 
+	// Headless set if show google browser window. Disable setting to true in the production environment.
+	Headless bool
+
 	mu           sync.Mutex    // mu protects the following fields
 	closed       bool          // set to true when the pool is closed.
 	active       int           // the number of open connections in the pool
@@ -75,7 +78,7 @@ func NewPool(poolConfig *Pool) Pool {
 	// create the root context
 	opts := append(chromedp.DefaultExecAllocatorOptions[:],
 		chromedp.NoDefaultBrowserCheck,
-		//chromedp.Flag("headless", false),
+		chromedp.Flag("headless", poolConfig.Headless),
 		//chromedp.Flag("no-sandbox", true)，
 		//chromedp.Flag("ignore-certificate-errors", true),
 		chromedp.Flag("disable-web-security", true),
