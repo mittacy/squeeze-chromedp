@@ -1,6 +1,8 @@
 github.com/chromedp/cdproto v0.0.0-20210713064928-7d28b402946a/go.mod h1:At5TxYYdxkbQL0TSefRjhLE3Q0lgvqKKMSFUglJ7i1U=
 github.com/chromedp/cdproto v0.0.0-20210808225517-c36c1bd4c35e h1:uYQIvPKwL7YQh+tQC+EUXmvWosBeOYbJZKrh4NnS0UM=
 github.com/chromedp/cdproto v0.0.0-20210808225517-c36c1bd4c35e/go.mod h1:At5TxYYdxkbQL0TSefRjhLE3Q0lgvqKKMSFUglJ7i1U=
+github.com/chromedp/cdproto v0.0.0-20210823203301-2c0adcc9edc4 h1:cD7F5LfNjC4dtb+BQe1KxxE8RsceYtS+Kyo+yEs4iUc=
+github.com/chromedp/cdproto v0.0.0-20210823203301-2c0adcc9edc4/go.mod h1:At5TxYYdxkbQL0TSefRjhLE3Q0lgvqKKMSFUglJ7i1U=
 github.com/chromedp/chromedp v0.7.4 h1:U+0d3WbB/Oj4mDuBOI0P7S3PJEued5UZIl5AJ3QulwU=
 github.com/chromedp/chromedp v0.7.4/go.mod h1:dBj+SXuQHznp6ZPwZeDDEBZKwclUwDLbZ0hjMialMYs=
 github.com/chromedp/sysutil v1.0.0 h1:+ZxhTpfpZlmchB58ih/LBHX52ky7w2VhQVKQMucy3Ic=
@@ -20,3 +22,5 @@ golang.org/x/sys v0.0.0-20201207223542-d4d67f95c62d/go.mod h1:h1NjWce9XRLGQEsW7w
 golang.org/x/sys v0.0.0-20210525143221-35b2ab0089ea/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
 golang.org/x/sys v0.0.0-20210820121016-41cdb8703e55 h1:rw6UNGRMfarCepjI8qOepea/SXwIBVfTKjztZ5gBbq4=
 golang.org/x/sys v0.0.0-20210820121016-41cdb8703e55/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
+golang.org/x/sys v0.0.0-20210823070655-63515b42dcdf h1:2ucpDCmfkl8Bd/FsLtiD653Wf96cW37s+iGx93zsu4k=
+golang.org/x/sys v0.0.0-20210823070655-63515b42dcdf/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=

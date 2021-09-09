@@ -16,19 +16,21 @@ var (
 
 func TestPooleSequential(t *testing.T) {
 	c := Pool{
+		InitActive:      1,           // 初始化连接数
 		MaxIdle:         10,          // 最大空闲连接数
 		MaxActive:       20,          // 最大连接数
 		IdleTimeout:     time.Minute, // 空闲时间
 		Wait:            false,       // 是否阻塞等待
 		MaxConnLifetime: time.Hour,   // 连接生命周期
+		ShowWindow:      false,       // 窗口可视化
 	}
 
 	pool := NewPool(&c)
 	defer pool.Close()
 
-	screen(&pool, "https://www.baidu.com")
+	screen(pool, "https://www.baidu.com")
 
-	screen(&pool, "https://golang.org/")
+	screen(pool, "https://golang.org/")
 }
 
 func TestPooleConcurrent(t *testing.T) {
@@ -55,13 +57,13 @@ func TestPooleConcurrent(t *testing.T) {
 	}
 
 	for _, v := range urls {
-		go screenWg(&pool, v)
+		go screenWg(pool, v)
 	}
 
-	time.Sleep(time.Second*30)
+	time.Sleep(time.Second * 30)
 
 	for _, v := range urls {
-		go screenWg(&pool, v)
+		go screenWg(pool, v)
 	}
 
 	wg.Wait()

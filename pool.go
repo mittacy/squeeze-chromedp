@@ -3,6 +3,7 @@ package squeeze_chromedp
 import (
 	"context"
 	"errors"
+	"fmt"
 	"github.com/chromedp/chromedp"
 	"sync"
 	"time"
@@ -19,6 +20,9 @@ var (
 )
 
 type Pool struct {
+	// InitActive number of connections when the pool init.
+	InitActive int
+
 	// Maximum number of idle connections in the pool.
 	MaxIdle int
 
@@ -74,15 +78,11 @@ type PoolStats struct {
 	WaitDuration time.Duration
 }
 
-func NewPool(poolConfig *Pool) Pool {
-	// todo checkout the config
-
+func NewPool(poolConfig *Pool) *Pool {
 	// create the root context
 	opts := append(chromedp.DefaultExecAllocatorOptions[:],
 		chromedp.NoDefaultBrowserCheck,
 		chromedp.Flag("headless", !poolConfig.ShowWindow),
-		//chromedp.Flag("no-sandbox", true)，
-		//chromedp.Flag("ignore-certificate-errors", true),
 		chromedp.Flag("disable-web-security", true),
 		chromedp.NoFirstRun,
 		chromedp.UserAgent("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.164 Safari/537.36"),
@@ -90,7 +90,8 @@ func NewPool(poolConfig *Pool) Pool {
 	opts = append(chromedp.DefaultExecAllocatorOptions[:], opts...)
 	rootCtx, cancel := chromedp.NewExecAllocator(context.Background(), opts...)
 
-	return Pool{
+	pool := Pool{
+		InitActive:  poolConfig.InitActive,
 		MaxIdle:     poolConfig.MaxIdle,
 		MaxActive:   poolConfig.MaxActive,
 		IdleTimeout: poolConfig.IdleTimeout,
@@ -98,6 +99,35 @@ func NewPool(poolConfig *Pool) Pool {
 		rootCtx:     rootCtx,
 		rootCancel:  cancel,
 	}
+
+	// init the connections where the InitActive greater than 0
+	i := poolConfig.InitActive
+	for i > 0 {
+		pool.active++
+		c, err := pool.newConn()
+		if err != nil {
+			panic(fmt.Sprintf("squeen-chromedp: %s", err))
+		}
+
+		conn := activeConn{
+			p: &pool,
+			pc: &poolConn{
+				c:       c,
+				created: time.Time{},
+			},
+		}
+
+		if err := chromedp.Run(conn.Get(), initWindow()); err != nil {
+			panic(err)
+		}
+
+		if err := conn.Close(); err != nil {
+			panic(fmt.Sprintf("squeen-chromedp: %s", err))
+		}
+		i--
+	}
+
+	return &pool
 }
 
 // Get gets a connection. The application must close the returned connection.
